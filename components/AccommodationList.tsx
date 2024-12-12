@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from 'react';
 import { searchAccommodations } from '@/lib/travelApi';
 import type { AccommodationResponse } from '@/lib/travelApi';
