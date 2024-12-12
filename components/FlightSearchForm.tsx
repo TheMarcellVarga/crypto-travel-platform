@@ -1,13 +1,18 @@
-// components/FlightSearchForm.tsx
 "use client";
 
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { AirportSearch } from "./AirportSearch";
 
 interface SearchParams {
   originLocationCode: string;
@@ -24,32 +29,34 @@ interface FlightSearchFormProps {
 export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
   const [departureDate, setDepartureDate] = useState<Date>();
   const [returnDate, setReturnDate] = useState<Date>();
-  
+  const [departureDateOpen, setDepartureDateOpen] = useState(false);
+  const [returnDateOpen, setReturnDateOpen] = useState(false);
+
   const [searchParams, setSearchParams] = useState<SearchParams>({
     originLocationCode: "",
     destinationLocationCode: "",
     departureDate: "",
     adults: 1,
-    returnDate: ""
+    returnDate: "",
   });
 
   const formatDateForAPI = (date: Date | undefined) => {
     if (!date) return "";
-    return format(date, 'dd/MM/yyyy');
+    return format(date, "dd/MM/yyyy");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const formattedParams = {
       originLocationCode: searchParams.originLocationCode,
       destinationLocationCode: searchParams.destinationLocationCode,
       departureDate: formatDateForAPI(departureDate),
       adults: searchParams.adults,
-      ...(returnDate && { returnDate: formatDateForAPI(returnDate) })
+      ...(returnDate && { returnDate: formatDateForAPI(returnDate) }),
     };
 
-    console.log('Formatted params:', formattedParams);
+    console.log("Formatted params:", formattedParams);
     onSearch(formattedParams);
   };
 
@@ -57,59 +64,52 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
     <form onSubmit={handleSubmit} className="mb-6 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <Label className="block text-sm font-medium text-gray-700">
             From
-            <input
-              type="text"
+            <AirportSearch
               value={searchParams.originLocationCode}
-              onChange={(e) =>
+              onChange={(value) =>
                 setSearchParams((prev) => ({
                   ...prev,
-                  originLocationCode: e.target.value.toUpperCase(),
+                  originLocationCode: value,
                 }))
               }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="e.g., LON"
-              required
-              maxLength={3}
+              placeholder="Search departure airport..."
             />
-          </label>
+          </Label>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <Label className="block text-sm font-medium text-gray-700">
             To
-            <input
-              type="text"
+            <AirportSearch
               value={searchParams.destinationLocationCode}
-              onChange={(e) =>
+              onChange={(value) =>
                 setSearchParams((prev) => ({
                   ...prev,
-                  destinationLocationCode: e.target.value.toUpperCase(),
+                  destinationLocationCode: value,
                 }))
               }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="e.g., NYC"
-              required
-              maxLength={3}
+              placeholder="Search arrival airport..."
             />
-          </label>
+          </Label>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <Label className="block text-sm font-medium text-gray-700">
             Departure Date
-            <Popover>
+            <Popover open={departureDateOpen} onOpenChange={setDepartureDateOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal mt-1",
+                  className={`w-full justify-start text-left font-normal mt-1 ${
                     !departureDate && "text-muted-foreground"
-                  )}
+                  }`}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {departureDate ? format(departureDate, "dd/MM/yyyy") : "Pick a date"}
+                  {departureDate
+                    ? format(departureDate, "dd/MM/yyyy")
+                    : "Pick a date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -118,9 +118,10 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                   selected={departureDate}
                   onSelect={(date) => {
                     setDepartureDate(date);
-                    setSearchParams(prev => ({
+                    setDepartureDateOpen(false);
+                    setSearchParams((prev) => ({
                       ...prev,
-                      departureDate: date ? formatDateForAPI(date) : ""
+                      departureDate: date ? formatDateForAPI(date) : "",
                     }));
                   }}
                   disabled={(date) => {
@@ -132,23 +133,24 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                 />
               </PopoverContent>
             </Popover>
-          </label>
+          </Label>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <Label className="block text-sm font-medium text-gray-700">
             Return Date (Optional)
-            <Popover>
+            <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal mt-1",
+                  className={`w-full justify-start text-left font-normal mt-1 ${
                     !returnDate && "text-muted-foreground"
-                  )}
+                  }`}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {returnDate ? format(returnDate, "dd/MM/yyyy") : "Pick a date"}
+                  {returnDate
+                    ? format(returnDate, "dd/MM/yyyy")
+                    : "Pick a date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -157,9 +159,10 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                   selected={returnDate}
                   onSelect={(date) => {
                     setReturnDate(date);
-                    setSearchParams(prev => ({
+                    setReturnDateOpen(false);
+                    setSearchParams((prev) => ({
                       ...prev,
-                      returnDate: date ? formatDateForAPI(date) : ""
+                      returnDate: date ? formatDateForAPI(date) : "",
                     }));
                   }}
                   disabled={(date) => {
@@ -171,13 +174,13 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                 />
               </PopoverContent>
             </Popover>
-          </label>
+          </Label>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <Label className="block text-sm font-medium text-gray-700">
             Number of Adults
-            <input
+            <Input
               type="number"
               min="1"
               max="9"
@@ -191,17 +194,17 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
             />
-          </label>
+          </Label>
         </div>
       </div>
 
       <div className="flex justify-end">
-        <button
+        <Button
           type="submit"
           className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors"
         >
           Search Flights
-        </button>
+        </Button>
       </div>
     </form>
   );
