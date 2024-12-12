@@ -2,6 +2,12 @@
 "use client";
 
 import { useState } from "react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface SearchParams {
   originLocationCode: string;
@@ -16,6 +22,9 @@ interface FlightSearchFormProps {
 }
 
 export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
+  const [departureDate, setDepartureDate] = useState<Date>();
+  const [returnDate, setReturnDate] = useState<Date>();
+  
   const [searchParams, setSearchParams] = useState<SearchParams>({
     originLocationCode: "",
     destinationLocationCode: "",
@@ -24,51 +33,25 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
     returnDate: ""
   });
 
-  // Convert YYYY-MM-DD to DD/MM/YYYY for display
-  const formatDateForDisplay = (dateStr: string) => {
-    if (!dateStr) return "";
-    const [year, month, day] = dateStr.split('-');
-    return `${day}/${month}/${year}`;
-  };
-
-  // Convert DD/MM/YYYY to YYYY-MM-DD for API
-  const formatDateForAPI = (dateStr: string) => {
-    if (!dateStr) return "";
-    const [day, month, year] = dateStr.split('/');
-    // Ensure month and day are padded with leading zeros
-    const paddedMonth = month.padStart(2, '0');
-    const paddedDay = day.padStart(2, '0');
-    return `${year}-${paddedMonth}-${paddedDay}`;
+  const formatDateForAPI = (date: Date | undefined) => {
+    if (!date) return "";
+    return format(date, 'dd/MM/yyyy');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Format dates for API
-    const formattedParams: {
-      originLocationCode: string;
-      destinationLocationCode: string;
-      departureDate: string;
-      adults: number;
-      returnDate?: string;
-    } = {
+    const formattedParams = {
       originLocationCode: searchParams.originLocationCode,
       destinationLocationCode: searchParams.destinationLocationCode,
-      departureDate: formatDateForAPI(searchParams.departureDate),
-      adults: searchParams.adults
+      departureDate: formatDateForAPI(departureDate),
+      adults: searchParams.adults,
+      ...(returnDate && { returnDate: formatDateForAPI(returnDate) })
     };
 
-    // Only add returnDate if it exists and is not empty
-    if (searchParams.returnDate) {
-      formattedParams.returnDate = formatDateForAPI(searchParams.returnDate);
-    }
-
-    console.log('Formatted params:', formattedParams); // For debugging
+    console.log('Formatted params:', formattedParams);
     onSearch(formattedParams);
   };
-
-  // Get today's date in DD/MM/YYYY format
-  const today = new Date().toLocaleDateString('en-GB'); // Returns DD/MM/YYYY
 
   return (
     <form onSubmit={handleSubmit} className="mb-6 space-y-4">
@@ -116,39 +99,78 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Departure Date
-            <input
-              type="text"
-              placeholder="DD/MM/YYYY"
-              value={searchParams.departureDate}
-              onChange={(e) =>
-                setSearchParams((prev) => ({
-                  ...prev,
-                  departureDate: e.target.value,
-                }))
-              }
-              pattern="\d{2}/\d{2}/\d{4}"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              required
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal mt-1",
+                    !departureDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {departureDate ? format(departureDate, "dd/MM/yyyy") : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={departureDate}
+                  onSelect={(date) => {
+                    setDepartureDate(date);
+                    setSearchParams(prev => ({
+                      ...prev,
+                      departureDate: date ? formatDateForAPI(date) : ""
+                    }));
+                  }}
+                  disabled={(date) => {
+                    const isPastDate = date < new Date();
+                    const isAfterReturn = returnDate ? date > returnDate : false;
+                    return isPastDate || isAfterReturn;
+                  }}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </label>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Return Date (Optional)
-            <input
-              type="text"
-              placeholder="DD/MM/YYYY"
-              value={searchParams.returnDate}
-              onChange={(e) =>
-                setSearchParams((prev) => ({
-                  ...prev,
-                  returnDate: e.target.value,
-                }))
-              }
-              pattern="\d{2}/\d{2}/\d{4}"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal mt-1",
+                    !returnDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {returnDate ? format(returnDate, "dd/MM/yyyy") : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={returnDate}
+                  onSelect={(date) => {
+                    setReturnDate(date);
+                    setSearchParams(prev => ({
+                      ...prev,
+                      returnDate: date ? formatDateForAPI(date) : ""
+                    }));
+                  }}
+                  disabled={(date) => {
+                    const isPastDate = date < new Date();
+                    const isBeforeDeparture = departureDate ? date < departureDate : false;
+                    return isPastDate || isBeforeDeparture;
+                  }}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </label>
         </div>
 
