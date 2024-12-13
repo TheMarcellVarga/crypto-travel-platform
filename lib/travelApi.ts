@@ -1,5 +1,5 @@
 // lib/travelApi.ts
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 
 // Create an instance for Amadeus authentication
 const amadeusAuth = axios.create({
@@ -35,12 +35,12 @@ const amadeusApi = axios.create({
 });
 
 // Add request interceptor to handle token
-amadeusApi.interceptors.request.use(async (config: AxiosRequestConfig) => {
+amadeusApi.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   const token = await getAmadeusToken();
   if (!config.headers) {
-    config.headers = {};
+    config.headers = new AxiosHeaders();
   }
-  config.headers.Authorization = `Bearer ${token}`;
+  config.headers.set('Authorization', `Bearer ${token}`);  // Use set method to add header
   return config;
 });
 

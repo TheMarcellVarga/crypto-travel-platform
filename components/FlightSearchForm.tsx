@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { AirportSearch } from "./AirportSearch";
+import { getCookie } from "cookies-next";
 
 interface SearchParams {
   originLocationCode: string;
@@ -31,7 +31,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
   const [returnDate, setReturnDate] = useState<Date>();
   const [departureDateOpen, setDepartureDateOpen] = useState(false);
   const [returnDateOpen, setReturnDateOpen] = useState(false);
-
+  
   const [searchParams, setSearchParams] = useState<SearchParams>({
     originLocationCode: "",
     destinationLocationCode: "",
@@ -40,9 +40,31 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
     returnDate: "",
   });
 
+  useEffect(() => {
+    const savedSearchParams = getCookie('lastSearchParams');
+    if (savedSearchParams) {
+      try {
+        const parsedParams = JSON.parse(savedSearchParams as string);
+        setSearchParams(parsedParams);
+
+        // If there's a departure date, set it in the date picker
+        if (parsedParams.departureDate) {
+          setDepartureDate(new Date(parsedParams.departureDate));
+        }
+
+        // If there's a return date, set it in the date picker
+        if (parsedParams.returnDate) {
+          setReturnDate(new Date(parsedParams.returnDate));
+        }
+      } catch (e) {
+        console.error('Error parsing saved search parameters:', e);
+      }
+    }
+  }, []);
+
   const formatDateForAPI = (date: Date | undefined) => {
     if (!date) return "";
-    return format(date, "dd/MM/yyyy");
+    return format(date, "yyyy-MM-dd");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -66,15 +88,19 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
         <div>
           <Label className="block text-sm font-medium text-gray-700">
             From
-            <AirportSearch
+            <Input
+              type="text"
               value={searchParams.originLocationCode}
-              onChange={(value) =>
+              onChange={(e) =>
                 setSearchParams((prev) => ({
                   ...prev,
-                  originLocationCode: value,
+                  originLocationCode: e.target.value.toUpperCase(),
                 }))
               }
-              placeholder="Search departure airport..."
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="e.g., LON"
+              required
+              maxLength={3}
             />
           </Label>
         </div>
@@ -82,15 +108,19 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
         <div>
           <Label className="block text-sm font-medium text-gray-700">
             To
-            <AirportSearch
+            <Input
+              type="text"
               value={searchParams.destinationLocationCode}
-              onChange={(value) =>
+              onChange={(e) =>
                 setSearchParams((prev) => ({
                   ...prev,
-                  destinationLocationCode: value,
+                  destinationLocationCode: e.target.value.toUpperCase(),
                 }))
               }
-              placeholder="Search arrival airport..."
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="e.g., NYC"
+              required
+              maxLength={3}
             />
           </Label>
         </div>
@@ -98,7 +128,10 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
         <div>
           <Label className="block text-sm font-medium text-gray-700">
             Departure Date
-            <Popover open={departureDateOpen} onOpenChange={setDepartureDateOpen}>
+            <Popover
+              open={departureDateOpen}
+              onOpenChange={setDepartureDateOpen}
+            >
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -107,9 +140,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                   }`}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {departureDate
-                    ? format(departureDate, "dd/MM/yyyy")
-                    : "Pick a date"}
+                  {departureDate ? format(departureDate, "yyyy-MM-dd") : "Pick a date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -121,12 +152,14 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                     setDepartureDateOpen(false);
                     setSearchParams((prev) => ({
                       ...prev,
-                      departureDate: date ? formatDateForAPI(date) : "",
+                      departureDate: date ? format(date, "yyyy-MM-dd") : "",
                     }));
                   }}
                   disabled={(date) => {
                     const isPastDate = date < new Date();
-                    const isAfterReturn = returnDate ? date > returnDate : false;
+                    const isAfterReturn = returnDate
+                      ? date > returnDate
+                      : false;
                     return isPastDate || isAfterReturn;
                   }}
                   initialFocus
@@ -139,7 +172,10 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
         <div>
           <Label className="block text-sm font-medium text-gray-700">
             Return Date (Optional)
-            <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
+            <Popover
+              open={returnDateOpen}
+              onOpenChange={setReturnDateOpen}
+            >
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -148,9 +184,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                   }`}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {returnDate
-                    ? format(returnDate, "dd/MM/yyyy")
-                    : "Pick a date"}
+                  {returnDate ? format(returnDate, "yyyy-MM-dd") : "Pick a date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -162,12 +196,14 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                     setReturnDateOpen(false);
                     setSearchParams((prev) => ({
                       ...prev,
-                      returnDate: date ? formatDateForAPI(date) : "",
+                      returnDate: date ? format(date, "yyyy-MM-dd") : "",
                     }));
                   }}
                   disabled={(date) => {
                     const isPastDate = date < new Date();
-                    const isBeforeDeparture = departureDate ? date < departureDate : false;
+                    const isBeforeDeparture = departureDate
+                      ? date < departureDate
+                      : false;
                     return isPastDate || isBeforeDeparture;
                   }}
                   initialFocus

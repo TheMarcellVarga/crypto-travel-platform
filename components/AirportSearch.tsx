@@ -19,10 +19,10 @@ import {
 } from "@/components/ui/popover";
 
 interface Airport {
-  iataCode: string;
+  iata_code: string;
   name: string;
-  cityName: string;
-  countryCode: string;
+  city: string;
+  country: string;
 }
 
 interface AirportSearchProps {
@@ -43,55 +43,25 @@ export function AirportSearch({ value, onChange, placeholder }: AirportSearchPro
         return;
       }
 
-      const apiKey = process.env.NEXT_PUBLIC_IATA_API_KEY;
-      const apiSecret = process.env.NEXT_PUBLIC_IATA_API_SECRET;
-
-      if (!apiKey || !apiSecret) {
-        console.error("IATA API credentials are not set");
-        return;
-      }
-
       try {
-        // First, get the access token
-        const tokenResponse = await fetch(
-          'https://api.iata.org/oauth/token',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `grant_type=client_credentials&client_id=${apiKey}&client_secret=${apiSecret}`
-          }
-        );
-
-        const tokenData = await tokenResponse.json();
-        const accessToken = tokenData.access_token;
-
-        // Then, search for airports
         const response = await fetch(
-          `https://api.iata.org/ndc/v21.3/airports?search=${encodeURIComponent(searchQuery)}`,
+          `https://airportdb.io/api/v1/airport/search?query=${encodeURIComponent(searchQuery)}&page=1&limit=10`,
           {
             headers: {
-              'Authorization': `Bearer ${accessToken}`,
-              'Accept': 'application/json',
+              'api-key': process.env.NEXT_PUBLIC_AIRPORTDB_API_KEY || '',
             },
           }
         );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const data = await response.json();
         
-        const formattedAirports: Airport[] = data.data
+        const formattedAirports: Airport[] = data.items
+          .filter((airport: any) => airport.iata_code) // Only include airports with IATA codes
           .map((airport: any) => ({
-            iataCode: airport.iataCode,
+            iata_code: airport.iata_code,
             name: airport.name,
-            cityName: airport.cityName,
-            countryCode: airport.countryCode
-          }))
-          .slice(0, 10); // Limit to 10 results
+            city: airport.city,
+            country: airport.country
+          }));
 
         setAirports(formattedAirports);
       } catch (error) {
@@ -107,7 +77,7 @@ export function AirportSearch({ value, onChange, placeholder }: AirportSearchPro
     return () => clearTimeout(debounceTimer);
   }, [searchQuery]);
 
-  const selectedAirport = airports.find((airport) => airport.iataCode === value);
+  const selectedAirport = airports.find((airport) => airport.iata_code === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -119,7 +89,7 @@ export function AirportSearch({ value, onChange, placeholder }: AirportSearchPro
           className="w-full justify-between"
         >
           {selectedAirport 
-            ? `${selectedAirport.cityName} - ${selectedAirport.name} (${selectedAirport.iataCode})`
+            ? `${selectedAirport.city} - ${selectedAirport.name} (${selectedAirport.iata_code})`
             : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -135,8 +105,8 @@ export function AirportSearch({ value, onChange, placeholder }: AirportSearchPro
           <CommandGroupPrimitive>
             {airports.map((airport) => (
               <CommandItemPrimitive
-                key={airport.iataCode}
-                value={airport.iataCode}
+                key={airport.iata_code}
+                value={airport.iata_code}
                 onSelect={(currentValue: string) => {
                   onChange(currentValue === value ? "" : currentValue);
                   setOpen(false);
@@ -145,13 +115,13 @@ export function AirportSearch({ value, onChange, placeholder }: AirportSearchPro
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value === airport.iataCode ? "opacity-100" : "opacity-0"
+                    value === airport.iata_code ? "opacity-100" : "opacity-0"
                   )}
                 />
                 <div className="flex flex-col">
-                  <span>{airport.cityName} - {airport.name}</span>
+                  <span>{airport.city} - {airport.name}</span>
                   <span className="text-sm text-muted-foreground">
-                    {airport.countryCode} ({airport.iataCode})
+                    {airport.country} ({airport.iata_code})
                   </span>
                 </div>
               </CommandItemPrimitive>
