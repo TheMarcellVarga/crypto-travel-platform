@@ -1,12 +1,9 @@
-// lib/travelApi.ts
 import axios, { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 
-// Create an instance for Amadeus authentication
 const amadeusAuth = axios.create({
-  baseURL: 'https://test.api.amadeus.com/v1', // Use test environment first
+  baseURL: 'https://test.api.amadeus.com/v1',
 });
 
-// Function to get the Amadeus access token
 async function getAmadeusToken() {
   try {
     console.log('Attempting to get token...');
@@ -29,22 +26,19 @@ async function getAmadeusToken() {
   }
 }
 
-// Create the main API instance
 const amadeusApi = axios.create({
-  baseURL: 'https://test.api.amadeus.com/v2', // Note: some endpoints use v2
+  baseURL: 'https://test.api.amadeus.com/v2',
 });
 
-// Add request interceptor to handle token
 amadeusApi.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   const token = await getAmadeusToken();
   if (!config.headers) {
     config.headers = new AxiosHeaders();
   }
-  config.headers.set('Authorization', `Bearer ${token}`);  // Use set method to add header
+  config.headers.set('Authorization', `Bearer ${token}`);
   return config;
 });
 
-// Flight search function with proper parameters
 export const searchFlights = async (params: {
   originLocationCode: string;
   destinationLocationCode: string;
@@ -56,7 +50,7 @@ export const searchFlights = async (params: {
     const response = await amadeusApi.get('/shopping/flight-offers', { 
       params: {
         ...params,
-        max: 20, // Number of results to return
+        max: 20,
         currencyCode: 'USD'
       }
     });
@@ -67,13 +61,6 @@ export const searchFlights = async (params: {
   }
 };
 
-// Example usage:
-// searchFlights({
-//   originLocationCode: 'NYC',
-//   destinationLocationCode: 'PAR',
-//   departureDate: '2024-06-01',
-//   adults: 1
-// });
 
 export const searchAccommodations = async (params: {
   cityCode: string;
