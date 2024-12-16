@@ -1,4 +1,3 @@
-// components/IATAAutocomplete.tsx
 import React, { useState, useEffect, useRef, KeyboardEvent } from "react";
 import { Input } from "@/components/ui/input";
 
@@ -136,7 +135,7 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
-    onChange(newValue, ""); // Clear IATA code when input changes
+    onChange(newValue, "");
   };
 
   return (
