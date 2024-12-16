@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -13,13 +13,16 @@ import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { getCookie } from "cookies-next";
+import IATAAutocomplete from "./IATAAutocomplete";
 
 interface SearchParams {
   originLocationCode: string;
+  originAirportName: string;
   destinationLocationCode: string;
-  departureDate: string;
+  destinationAirportName: string;
+  departureDate: string | undefined;
   adults: number;
-  returnDate?: string;
+  returnDate?: string | undefined;
 }
 
 interface FlightSearchFormProps {
@@ -31,51 +34,78 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
   const [returnDate, setReturnDate] = useState<Date>();
   const [departureDateOpen, setDepartureDateOpen] = useState(false);
   const [returnDateOpen, setReturnDateOpen] = useState(false);
-  
+
   const [searchParams, setSearchParams] = useState<SearchParams>({
     originLocationCode: "",
+    originAirportName: "",
     destinationLocationCode: "",
+    destinationAirportName: "",
     departureDate: "",
     adults: 1,
     returnDate: "",
   });
 
   useEffect(() => {
-    const savedSearchParams = getCookie('lastSearchParams');
+    const savedSearchParams = getCookie("lastSearchParams");
     if (savedSearchParams) {
       try {
         const parsedParams = JSON.parse(savedSearchParams as string);
         setSearchParams(parsedParams);
 
-        // If there's a departure date, set it in the date picker
         if (parsedParams.departureDate) {
           setDepartureDate(new Date(parsedParams.departureDate));
         }
 
-        // If there's a return date, set it in the date picker
         if (parsedParams.returnDate) {
           setReturnDate(new Date(parsedParams.returnDate));
         }
       } catch (e) {
-        console.error('Error parsing saved search parameters:', e);
+        console.error("Error parsing saved search parameters:", e);
       }
     }
   }, []);
 
   const formatDateForAPI = (date: Date | undefined) => {
-    if (!date) return "";
+    if (!date) return undefined;
     return format(date, "yyyy-MM-dd");
+  };
+
+  const [errors, setErrors] = useState<{
+    from?: string;
+    to?: string;
+    departureDate?: string;
+  }>({});
+
+  const validateForm = (): boolean => {
+    const newErrors: typeof errors = {};
+
+    if (!searchParams.originLocationCode) {
+      newErrors.from = "Please select a departure airport";
+    }
+
+    if (!searchParams.destinationLocationCode) {
+      newErrors.to = "Please select an arrival airport";
+    }
+
+    if (!searchParams.departureDate) {
+      newErrors.departureDate = "Please select a departure date";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const formattedParams = {
-      originLocationCode: searchParams.originLocationCode,
-      destinationLocationCode: searchParams.destinationLocationCode,
+    if (!validateForm()) {
+      return;
+    }
+
+    const formattedParams: SearchParams = {
+      ...searchParams,
       departureDate: formatDateForAPI(departureDate),
-      adults: searchParams.adults,
-      ...(returnDate && { returnDate: formatDateForAPI(returnDate) }),
+      returnDate: formatDateForAPI(returnDate),
     };
 
     console.log("Formatted params:", formattedParams);
@@ -86,43 +116,39 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
     <form onSubmit={handleSubmit} className="mb-6 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div>
-          <Label className="block text-sm font-medium text-gray-700">
-            From
-            <Input
-              type="text"
-              value={searchParams.originLocationCode}
-              onChange={(e) =>
-                setSearchParams((prev) => ({
-                  ...prev,
-                  originLocationCode: e.target.value.toUpperCase(),
-                }))
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="e.g., LON"
-              required
-              maxLength={3}
-            />
-          </Label>
+          <IATAAutocomplete
+            value={searchParams.originAirportName}
+            onChange={(airportName, iataCode) =>
+              setSearchParams((prev) => ({
+                ...prev,
+                originAirportName: airportName,
+                originLocationCode: iataCode,
+              }))
+            }
+            placeholder="e.g., London Heathrow"
+            label="From"
+          />
+          {errors.from && (
+            <p className="text-red-500 text-sm mt-1">{errors.from}</p>
+          )}
         </div>
 
         <div>
-          <Label className="block text-sm font-medium text-gray-700">
-            To
-            <Input
-              type="text"
-              value={searchParams.destinationLocationCode}
-              onChange={(e) =>
-                setSearchParams((prev) => ({
-                  ...prev,
-                  destinationLocationCode: e.target.value.toUpperCase(),
-                }))
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="e.g., NYC"
-              required
-              maxLength={3}
-            />
-          </Label>
+          <IATAAutocomplete
+            value={searchParams.destinationAirportName}
+            onChange={(airportName, iataCode) =>
+              setSearchParams((prev) => ({
+                ...prev,
+                destinationAirportName: airportName,
+                destinationLocationCode: iataCode,
+              }))
+            }
+            placeholder="e.g., New York JFK"
+            label="To"
+          />
+          {errors.to && (
+            <p className="text-red-500 text-sm mt-1">{errors.to}</p>
+          )}
         </div>
 
         <div>
@@ -140,7 +166,9 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                   }`}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {departureDate ? format(departureDate, "yyyy-MM-dd") : "Pick a date"}
+                  {departureDate
+                    ? format(departureDate, "yyyy-MM-dd")
+                    : "Pick a date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -155,27 +183,24 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                       departureDate: date ? format(date, "yyyy-MM-dd") : "",
                     }));
                   }}
-                  disabled={(date) => {
-                    const isPastDate = date < new Date();
-                    const isAfterReturn = returnDate
-                      ? date > returnDate
-                      : false;
-                    return isPastDate || isAfterReturn;
-                  }}
+                  disabled={(date) =>
+                    date < new Date() ||
+                    (returnDate ? date > returnDate : false)
+                  }
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
           </Label>
+          {errors.departureDate && (
+            <p className="text-red-500 text-sm mt-1">{errors.departureDate}</p>
+          )}
         </div>
 
         <div>
           <Label className="block text-sm font-medium text-gray-700">
             Return Date (Optional)
-            <Popover
-              open={returnDateOpen}
-              onOpenChange={setReturnDateOpen}
-            >
+            <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -184,7 +209,9 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                   }`}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {returnDate ? format(returnDate, "yyyy-MM-dd") : "Pick a date"}
+                  {returnDate
+                    ? format(returnDate, "yyyy-MM-dd")
+                    : "Pick a date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
