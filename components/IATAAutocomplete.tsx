@@ -31,6 +31,7 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [inputValue, setInputValue] = useState(value);
+  const [hasSelectedValue, setHasSelectedValue] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -79,7 +80,11 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
           item.region_name.toLowerCase().includes(inputValue.toLowerCase()))
     );
     setFilteredList(filtered.slice(0, 10));
-    setIsOpen(filtered.length > 0 && inputValue.length > 0);
+    
+    // Only update isOpen if it's currently true
+    if (isOpen) {
+      setIsOpen(filtered.length > 0 && inputValue.length > 0);
+    }
     setSelectedIndex(-1);
   }, [inputValue, iataList]);
 
@@ -103,6 +108,7 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
     onChange(selected.airport, selected.iata);
     setIsOpen(false);
     setSelectedIndex(-1);
+    setHasSelectedValue(true);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -136,6 +142,12 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
     const newValue = e.target.value;
     setInputValue(newValue);
     onChange(newValue, "");
+    setIsOpen(true);
+  };
+
+  const handleInputClick = () => {
+    setIsOpen(true);
+    setHasSelectedValue(false);
   };
 
   return (
@@ -148,6 +160,7 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
+          onClick={handleInputClick}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           placeholder={placeholder}
         />
