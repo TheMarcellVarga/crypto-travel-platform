@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { searchFlights } from "@/lib/travelApi";
-import { getCookie, setCookie } from 'cookies-next';
+import { getCookie, setCookie } from "cookies-next";
 import { FlightSearchForm } from "./FlightSearchForm";
 import {
   Card,
@@ -83,15 +83,14 @@ export const FlightList = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const savedFlights = getCookie('flightSearchResults');
+    const savedFlights = getCookie("flightSearchResults");
 
     if (savedFlights) {
       try {
         const parsedResults = JSON.parse(savedFlights as string);
-        // If the saved results include a timestamp, extract the data
         setFlights(parsedResults.data || parsedResults);
       } catch (e) {
-        console.error('Error parsing saved flights:', e);
+        console.error("Error parsing saved flights:", e);
       }
     }
   }, []);
@@ -103,19 +102,19 @@ export const FlightList = () => {
       const data = await searchFlights(searchParams);
       const resultsWithTimestamp = {
         timestamp: new Date().toISOString(),
-        data: data.data || []
+        data: data.data || [],
       };
 
       setFlights(resultsWithTimestamp.data);
-      
-      setCookie('flightSearchResults', JSON.stringify(resultsWithTimestamp), {
+
+      setCookie("flightSearchResults", JSON.stringify(resultsWithTimestamp), {
         maxAge: 3600,
-        path: '/',
+        path: "/",
       });
-      
-      setCookie('lastSearchParams', JSON.stringify(searchParams), {
+
+      setCookie("lastSearchParams", JSON.stringify(searchParams), {
         maxAge: 3600,
-        path: '/',
+        path: "/",
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch flights");
@@ -124,10 +123,9 @@ export const FlightList = () => {
     }
   };
 
-  // Function to clear saved results
   const clearSavedResults = () => {
-    setCookie('flightSearchResults', '', { maxAge: 0, path: '/' });
-    setCookie('lastSearchParams', '', { maxAge: 0, path: '/' });
+    setCookie("flightSearchResults", "", { maxAge: 0, path: "/" });
+    setCookie("lastSearchParams", "", { maxAge: 0, path: "/" });
     setFlights([]);
   };
 
@@ -166,11 +164,9 @@ export const FlightList = () => {
     itinerary: Itinerary,
     provider: FlightProvider
   ) => {
-    // Get the first and last segments
     const firstSegment = itinerary.segments[0];
     const lastSegment = itinerary.segments[itinerary.segments.length - 1];
 
-    // Format date to YYYY-MM-DD
     const departureDate = new Date(firstSegment.departure.at)
       .toISOString()
       .split("T")[0];
@@ -242,34 +238,42 @@ export const FlightList = () => {
 
       {flights.length > 0 ? (
         <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle className="text-3xl font-bold">
-                  Available Flights
-                </CardTitle>
-                {getCookie('flightSearchResults') && (
-                  <CardDescription className="text-sm text-muted-foreground">
-                    Results from{' '}
-                    {new Date(JSON.parse(getCookie('flightSearchResults') as string).timestamp).toLocaleString()}{' '}
-                    <Button
-                      variant="link"
-                      className="p-0 h-auto"
-                      onClick={() => handleSearch(JSON.parse(getCookie('lastSearchParams') as string))}
-                    >
-                      Refresh
-                    </Button>
-                  </CardDescription>
-                )}
-              </div>
-              <div className="flex items-center gap-4">
-                <Badge variant="secondary" className="text-lg">
-                  {flights.length} flights found
-                </Badge>
-                <Button variant="outline" size="sm" onClick={clearSavedResults}>
-                  Clear Results
-                </Button>
-              </div>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle className="text-3xl font-bold">
+                Available Flights
+              </CardTitle>
+              {getCookie("flightSearchResults") && (
+                <CardDescription className="text-sm text-muted-foreground">
+                  Results from{" "}
+                  {new Date(
+                    JSON.parse(
+                      getCookie("flightSearchResults") as string
+                    ).timestamp
+                  ).toLocaleString()}{" "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto"
+                    onClick={() =>
+                      handleSearch(
+                        JSON.parse(getCookie("lastSearchParams") as string)
+                      )
+                    }
+                  >
+                    Refresh
+                  </Button>
+                </CardDescription>
+              )}
             </div>
+            <div className="flex items-center gap-4">
+              <Badge variant="secondary" className="text-lg">
+                {flights.length} flights found
+              </Badge>
+              <Button variant="outline" size="sm" onClick={clearSavedResults}>
+                Clear Results
+              </Button>
+            </div>
+          </div>
 
           <ScrollArea className="h-[calc(100vh-300px)]">
             <div className="space-y-4 pr-4">
@@ -492,7 +496,8 @@ export const FlightList = () => {
               <div className="space-y-2">
                 <CardTitle>No Flights Found</CardTitle>
                 <CardDescription>
-                  Search for flights using the form above to see available options
+                  Search for flights using the form above to see available
+                  options
                 </CardDescription>
               </div>
             </div>
