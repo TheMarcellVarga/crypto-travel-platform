@@ -80,8 +80,7 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
           item.region_name.toLowerCase().includes(inputValue.toLowerCase()))
     );
     setFilteredList(filtered.slice(0, 10));
-    
-    // Only update isOpen if it's currently true
+
     if (isOpen) {
       setIsOpen(filtered.length > 0 && inputValue.length > 0);
     }
