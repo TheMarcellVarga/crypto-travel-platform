@@ -92,7 +92,8 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
     }
 
     if (searchParams.returnDate && !searchParams.departureDate) {
-      newErrors.departureDate = "Departure date is required when return date is set";
+      newErrors.departureDate =
+        "Departure date is required when return date is set";
     }
 
     setErrors(newErrors);
