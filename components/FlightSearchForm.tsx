@@ -91,6 +91,10 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
       newErrors.departureDate = "Please select a departure date";
     }
 
+    if (searchParams.returnDate && !searchParams.departureDate) {
+      newErrors.departureDate = "Departure date is required when return date is set";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -182,6 +186,10 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                       ...prev,
                       departureDate: date ? format(date, "yyyy-MM-dd") : "",
                     }));
+                    if (returnDate && date && returnDate < date) {
+                      setReturnDate(undefined);
+                      setSearchParams((prev) => ({ ...prev, returnDate: "" }));
+                    }
                   }}
                   disabled={(date) =>
                     date < new Date() ||
@@ -225,13 +233,17 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                       ...prev,
                       returnDate: date ? format(date, "yyyy-MM-dd") : "",
                     }));
+                    if (!departureDate) {
+                      setReturnDate(undefined);
+                      setSearchParams((prev) => ({ ...prev, returnDate: "" }));
+                    }
                   }}
                   disabled={(date) => {
                     const isPastDate = date < new Date();
                     const isBeforeDeparture = departureDate
                       ? date < departureDate
                       : false;
-                    return isPastDate || isBeforeDeparture;
+                    return isPastDate || isBeforeDeparture || !departureDate;
                   }}
                   initialFocus
                 />
