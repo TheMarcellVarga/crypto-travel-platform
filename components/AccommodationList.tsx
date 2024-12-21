@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
 import { searchAccommodations } from '@/lib/travelApi';
 import type { AccommodationResponse } from '@/lib/travelApi';
 
 export const AccommodationList = () => {
-  const [accommodations, setAccommodations] = useState<AccommodationResponse[]>([]);
+  const [accommodations, setAccommodations] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,10 +12,11 @@ export const AccommodationList = () => {
     const fetchAccommodations = async () => {
       try {
         const params = {
-          location: 'London',
-          checkIn: new Date().toISOString(),
-          checkOut: new Date(Date.now() + 86400000).toISOString(),
-          guests: 2
+          cityCode: 'LON',
+          checkInDate: new Date().toISOString().split('T')[0], // Format: YYYY-MM-DD
+          checkOutDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Format: YYYY-MM-DD
+          adults: 2,
+          roomQuantity: 1
         };
         
         const data = await searchAccommodations(params);
@@ -45,7 +46,7 @@ export const AccommodationList = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-      {accommodations.map((accommodation) => (
+      {accommodations.map((accommodation: { id: Key | null | undefined; photos: (string | undefined)[]; name: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; location: { address: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }; rating: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; price: { amount: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; currency: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }; contactInfo: { website: string | undefined; }; }) => (
         <div 
           key={accommodation.id}
           className="border rounded-lg shadow-lg p-4"
