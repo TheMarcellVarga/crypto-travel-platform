@@ -1,4 +1,4 @@
-import axios, { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 const amadeusAuth = axios.create({
   baseURL: 'https://test.api.amadeus.com/v1',
@@ -30,12 +30,15 @@ const amadeusApi = axios.create({
   baseURL: 'https://test.api.amadeus.com/v2',
 });
 
-amadeusApi.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+amadeusApi.interceptors.request.use(async (config: AxiosRequestConfig) => {
   const token = await getAmadeusToken();
-  if (!config.headers) {
-    config.headers = new AxiosHeaders();
+  if (config.headers) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  } else {
+    config.headers = {
+      Authorization: `Bearer ${token}`
+    };
   }
-  config.headers.set('Authorization', `Bearer ${token}`);
   return config;
 });
 
