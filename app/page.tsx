@@ -1,14 +1,20 @@
 import { Layout } from '@/components/Layout';
+import { Hero } from '@/components/Hero';
+import { Features } from '@/components/Features';
+import { Testimonials } from '@/components/Testimonials';
+import { CallToAction } from '@/components/CallToAction';
+import { Pricing } from '@/components/Pricing';
+import { FAQs } from '@/components/FAQs';
 
 export default function Home() {
   return (
     <Layout>
-      <div className="container mx-auto px-6 py-4">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Crypto Travel</h1>
-        <p className="text-xl">Book accommodations, flights, and share experiences using cryptocurrency.</p>
-        <br />
-        <p className="text-xl italic">Travel to Crypto-friendly destinations</p>
-      </div>
+      <Hero />
+      <Features />
+      <Testimonials />
+      <Pricing />
+      <FAQs />
+      <CallToAction />
     </Layout>
   );
 }

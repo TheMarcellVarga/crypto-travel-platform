@@ -84,3 +84,20 @@ export const searchAccommodations = async (params: {
     throw error;
   }
 };
+
+export interface AccommodationResponse {
+  id: string;
+  name: string;
+  photos?: string[];
+  location?: {
+    address?: string;
+  };
+  rating?: string;
+  price?: {
+    amount: number;
+    currency: string;
+  };
+  contactInfo?: {
+    website?: string;
+  };
+}
