@@ -1,46 +1,157 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosRequestHeaders,
+} from "axios";
 
-const amadeusAuth = axios.create({
-  baseURL: 'https://test.api.amadeus.com/v1',
+const amadeusApiV2 = axios.create({
+  baseURL: "https://test.api.amadeus.com/v2",
 });
 
-async function getAmadeusToken() {
-  try {
-    console.log('Attempting to get token...');
-    const tokenResponse = await amadeusAuth.post('/security/oauth2/token', 
-      new URLSearchParams({
-        'grant_type': 'client_credentials',
-        'client_id': process.env.NEXT_PUBLIC_AMADEUS_API_KEY!,
-        'client_secret': process.env.NEXT_PUBLIC_AMADEUS_API_SECRET!
-      }), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
+const amadeusApiV3 = axios.create({
+  baseURL: "https://test.api.amadeus.com/v3",
+  headers: {
+    Authorization: `Bearer ${process.env.NEXT_PUBLIC_AMADEUS_API_KEY}`,
+  },
+});
 
-    console.log('Token obtained successfully');
-    return tokenResponse.data.access_token;
-  } catch (error: any) {
-    console.error('Error getting token:', error.response?.data || error.message);
-    throw error;
-  }
+const getAmadeusToken = async () => {
+  const tokenResponse = await axios.post(
+    "https://test.api.amadeus.com/v1/security/oauth2/token",
+    new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: process.env.NEXT_PUBLIC_AMADEUS_API_KEY!,
+      client_secret: process.env.NEXT_PUBLIC_AMADEUS_API_SECRET!,
+    }),
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    }
+  );
+  return tokenResponse.data.access_token;
+};
+
+const applyAmadeusInterceptor = (instance: AxiosInstance) => {
+  instance.interceptors.request.use(async (config: AxiosRequestConfig) => {
+    const token = await getAmadeusToken();
+    if (config.headers) {
+      (config.headers as AxiosRequestHeaders)[
+        "Authorization"
+      ] = `Bearer ${token}`;
+    } else {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    return config;
+  });
+};
+
+// Apply the interceptor to both instances
+applyAmadeusInterceptor(amadeusApiV2);
+applyAmadeusInterceptor(amadeusApiV3);
+
+export interface HotelSearchParams {
+  hotelIds: string;
+  adults: number;
+  checkInDate: string;
+  roomQuantity: number;
+  paymentPolicy: "NONE" | "GUARANTEE" | "DEPOSIT";
+  bestRateOnly: boolean;
 }
 
-const amadeusApi = axios.create({
-  baseURL: 'https://test.api.amadeus.com/v2',
-});
-
-amadeusApi.interceptors.request.use(async (config: AxiosRequestConfig) => {
-  const token = await getAmadeusToken();
-  if (config.headers) {
-    config.headers['Authorization'] = `Bearer ${token}`;
-  } else {
-    config.headers = {
-      Authorization: `Bearer ${token}`
+export interface HotelOffer {
+  id: string;
+  checkInDate: string;
+  checkOutDate: string;
+  roomQuantity: number;
+  rateCode: string;
+  rateFamilyEstimated: {
+    code: string;
+    type: string;
+  };
+  category: string;
+  description: {
+    text: string;
+    lang: string;
+  };
+  room: {
+    type: string;
+    typeEstimated: {
+      category: string;
+      beds: number;
+      bedType: string;
     };
+    description: {
+      text: string;
+      lang: string;
+    };
+  };
+  guests: {
+    adults: number;
+  };
+  price: {
+    currency: string;
+    base: string;
+    total: string;
+    variations: {
+      average: {
+        base: string;
+      };
+      changes: Array<{
+        startDate: string;
+        endDate: string;
+        total: string;
+      }>;
+    };
+  };
+  policies: {
+    paymentType: string;
+    cancellation: {
+      description: {
+        text: string;
+        lang: string;
+      };
+      type: string;
+    };
+  };
+}
+
+export interface HotelOfferResponse {
+  data: Array<{
+    type: string;
+    hotel: {
+      type: string;
+      hotelId: string;
+      chainCode: string;
+      dupeId: string;
+      name: string;
+      cityCode: string;
+      latitude: number;
+      longitude: number;
+    };
+    available: boolean;
+    offers: HotelOffer[];
+  }>;
+}
+
+export const searchHotelOffers = async (
+  params: HotelSearchParams
+): Promise<HotelOfferResponse> => {
+  try {
+    const response = await amadeusApiV3.get("/shopping/hotel-offers", {
+      params,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Error searching hotel offers:",
+      error.response?.data || error.message
+    );
+    throw error;
   }
-  return config;
-});
+};
 
 export const searchFlights = async (params: {
   originLocationCode: string;
@@ -50,57 +161,19 @@ export const searchFlights = async (params: {
   returnDate?: string;
 }) => {
   try {
-    const response = await amadeusApi.get('/shopping/flight-offers', { 
+    const response = await amadeusApiV2.get("/shopping/flight-offers", {
       params: {
         ...params,
         max: 20,
-        currencyCode: 'USD'
-      }
+        currencyCode: "USD",
+      },
     });
     return response.data;
   } catch (error: any) {
-    console.error('Error searching flights:', error.response?.data || error.message);
+    console.error(
+      "Error searching flights:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
-
-
-export const searchAccommodations = async (params: {
-  cityCode: string;
-  checkInDate: string;
-  checkOutDate: string;
-  adults: number;
-  roomQuantity?: number;
-}) => {
-  try {
-    const response = await amadeusApi.get('/shopping/hotel-offers', {
-      params: {
-        ...params,
-        roomQuantity: params.roomQuantity || 1,
-        currency: 'USD',
-        bestRateOnly: true
-      }
-    });
-    return response.data;
-  } catch (error: any) {
-    console.error('Error searching accommodations:', error.response?.data || error.message);
-    throw error;
-  }
-};
-
-export interface AccommodationResponse {
-  id: string;
-  name: string;
-  photos?: string[];
-  location?: {
-    address?: string;
-  };
-  rating?: string;
-  price?: {
-    amount: number;
-    currency: string;
-  };
-  contactInfo?: {
-    website?: string;
-  };
-}

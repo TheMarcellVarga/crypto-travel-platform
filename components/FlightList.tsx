@@ -99,13 +99,20 @@ export const FlightList = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await searchFlights(searchParams);
+      const data = await searchFlights({
+        originLocationCode: searchParams.originLocationCode,
+        destinationLocationCode: searchParams.destinationLocationCode,
+        departureDate: searchParams.departureDate,
+        adults: searchParams.adults,
+        returnDate: searchParams.returnDate,
+      });
       const resultsWithTimestamp = {
         timestamp: new Date().toISOString(),
         data: data.data || [],
       };
 
       setFlights(resultsWithTimestamp.data);
+      setLoading(false);
 
       setCookie("flightSearchResults", JSON.stringify(resultsWithTimestamp), {
         maxAge: 3600,
@@ -118,7 +125,6 @@ export const FlightList = () => {
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch flights");
-    } finally {
       setLoading(false);
     }
   };
