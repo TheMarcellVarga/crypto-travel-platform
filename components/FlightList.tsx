@@ -272,21 +272,21 @@ export const FlightList = () => {
               )}
             </div>
             <div className="flex items-center gap-4">
-              <Badge variant="secondary" className="text-lg">
+              <Badge variant="secondary" className="text-lg bg-secondary text-secondary-foreground">
                 {flights.length} flights found
               </Badge>
-              <Button variant="outline" size="sm" onClick={clearSavedResults}>
+              <Button variant="outline" size="sm" onClick={clearSavedResults} className="bg-background text-foreground">
                 Clear Results
               </Button>
             </div>
           </div>
 
-          <ScrollArea className="h-[calc(100vh-300px)]">
+          <ScrollArea className="h-[calc(100vh-300px)] bg-background">
             <div className="space-y-4 pr-4">
               {flights.map((flight) => (
                 <Card
                   key={flight.id}
-                  className="hover:shadow-lg transition-all duration-300"
+                  className="hover:shadow-lg transition-all duration-300 bg-card text-card-foreground"
                 >
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-center">
@@ -300,11 +300,8 @@ export const FlightList = () => {
                         </Badge>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-green-600">
-                          {formatPrice(
-                            flight.price.total,
-                            flight.price.currency
-                          )}
+                        <span className="text-2xl font-bold text-primary">
+                          {formatPrice(flight.price.total, flight.price.currency)}
                         </span>
                       </div>
                     </div>
@@ -323,9 +320,7 @@ export const FlightList = () => {
                                       {itinerary.segments[0].departure.iataCode}
                                     </div>
                                     <div className="text-sm text-muted-foreground">
-                                      {formatTime(
-                                        itinerary.segments[0].departure.at
-                                      )}
+                                      {formatTime(itinerary.segments[0].departure.at)}
                                     </div>
                                     <div className="text-xs text-muted-foreground">
                                       {new Date(
@@ -341,7 +336,7 @@ export const FlightList = () => {
 
                               <div className="flex flex-col items-center min-w-[150px]">
                                 <div className="relative w-full">
-                                  <Separator className="my-4" />
+                                  <Separator className="my-4 bg-border" />
                                   <Plane className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 text-primary" />
                                 </div>
                                 <div className="flex flex-col items-center gap-1">
@@ -434,7 +429,7 @@ export const FlightList = () => {
                                 Book Flight <ArrowRight className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent>
+                            <DropdownMenuContent className="bg-popover text-popover-foreground">
                               <DropdownMenuItem
                                 onClick={() => {
                                   const url = generateFlightLink(
@@ -495,15 +490,14 @@ export const FlightList = () => {
           </ScrollArea>
         </div>
       ) : (
-        <Card>
+        <Card className="bg-card text-card-foreground">
           <CardContent className="py-8">
             <div className="text-center space-y-4">
               <Plane className="h-12 w-12 mx-auto text-muted-foreground" />
               <div className="space-y-2">
-                <CardTitle>No Flights Found</CardTitle>
-                <CardDescription>
-                  Search for flights using the form above to see available
-                  options
+                <CardTitle className="text-primary">No Flights Found</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Search for flights using the form above to see available options
                 </CardDescription>
               </div>
             </div>

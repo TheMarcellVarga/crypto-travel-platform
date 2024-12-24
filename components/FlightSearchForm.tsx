@@ -118,7 +118,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 space-y-4">
+    <form onSubmit={handleSubmit} className="mb-6 space-y-4 bg-background text-foreground">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div>
           <IATAAutocomplete
@@ -134,7 +134,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
             label="From"
           />
           {errors.from && (
-            <p className="text-red-500 text-sm mt-1">{errors.from}</p>
+            <p className="text-destructive text-sm mt-1">{errors.from}</p>
           )}
         </div>
 
@@ -157,7 +157,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
         </div>
 
         <div>
-          <Label className="block text-sm font-medium text-gray-700">
+          <Label className="block text-sm font-medium text-foreground">
             Departure Date
             <Popover
               open={departureDateOpen}
@@ -176,7 +176,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                     : "Pick a date"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 bg-popover" align="start">
                 <Calendar
                   mode="single"
                   selected={departureDate}
@@ -197,17 +197,18 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                     (returnDate ? date > returnDate : false)
                   }
                   initialFocus
+                  className="bg-background border border-border rounded-md"
                 />
               </PopoverContent>
             </Popover>
           </Label>
           {errors.departureDate && (
-            <p className="text-red-500 text-sm mt-1">{errors.departureDate}</p>
+            <p className="text-destructive text-sm mt-1">{errors.departureDate}</p>
           )}
         </div>
 
         <div>
-          <Label className="block text-sm font-medium text-gray-700">
+          <Label className="block text-sm font-medium text-foreground">
             Return Date (Optional)
             <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
               <PopoverTrigger asChild>
@@ -254,7 +255,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
         </div>
 
         <div>
-          <Label className="block text-sm font-medium text-gray-700">
+          <Label className="block text-sm font-medium text-foreground">
             Number of Adults
             <Input
               type="number"
@@ -267,7 +268,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
                   adults: parseInt(e.target.value),
                 }))
               }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-input bg-background text-foreground shadow-sm focus:border-ring focus:ring-ring"
               required
             />
           </Label>
@@ -277,7 +278,7 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
       <div className="flex justify-end">
         <Button
           type="submit"
-          className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors"
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
           Search Flights
         </Button>

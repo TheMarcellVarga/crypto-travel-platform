@@ -151,7 +151,7 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
 
   return (
     <div ref={wrapperRef} className="relative">
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-foreground">
         {label}
         <Input
           ref={inputRef}
@@ -160,17 +160,17 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onClick={handleInputClick}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border-input bg-background text-foreground shadow-sm focus:border-ring focus:ring-ring"
           placeholder={placeholder}
         />
       </label>
       {isOpen && (
-        <ul className="absolute z-10 mt-1 w-[200%] bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+        <ul className="absolute z-10 mt-1 w-[200%] bg-popover shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-border ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
           {filteredList.map((item, index) => (
             <li
               key={item.iata}
               className={`cursor-pointer select-none relative py-2 px-3 ${
-                index === selectedIndex ? "bg-blue-100" : "hover:bg-gray-100"
+                index === selectedIndex ? "bg-accent text-accent-foreground" : "text-popover-foreground hover:bg-accent hover:text-accent-foreground"
               }`}
               onClick={() => handleSelect(item)}
             >
@@ -178,7 +178,7 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
                 <span className="font-semibold flex-shrink-0 mr-2">
                   {item.airport}
                 </span>
-                <span className="text-sm text-gray-500 truncate flex-grow text-right">
+                <span className="text-sm text-muted-foreground truncate flex-grow text-right">
                   {item.region_name}, {item.country_code}
                 </span>
                 <span className="text-sm font-mono ml-2 flex-shrink-0">
