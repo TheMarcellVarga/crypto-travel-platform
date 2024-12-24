@@ -342,7 +342,7 @@ export const FlightList = () => {
                               <div className="flex flex-col items-center min-w-[150px]">
                                 <div className="relative w-full">
                                   <Separator className="my-4" />
-                                  <Plane className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-90 text-primary" />
+                                  <Plane className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 text-primary" />
                                 </div>
                                 <div className="flex flex-col items-center gap-1">
                                   <span className="text-sm font-medium">
