@@ -11,7 +11,6 @@ export const BookingForm = ({ onSubmit }: BookingFormProps) => {
   const [bookingData, setBookingData] = useState({
     name: '',
     email: '',
-    // Add more booking fields
   });
 
   const handleSubmit = (e: React.FormEvent) => {

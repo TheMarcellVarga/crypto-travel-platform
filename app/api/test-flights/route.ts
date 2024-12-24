@@ -11,8 +11,8 @@ export async function GET() {
     const departureDateStr = futureDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
 
     const searchParams = {
-      originLocationCode: 'LHR',      // London Heathrow
-      destinationLocationCode: 'CDG', // Paris Charles de Gaulle
+      originLocationCode: 'LHR',
+      destinationLocationCode: 'CDG',
       departureDate: departureDateStr,
       adults: 1,
       max: 5,

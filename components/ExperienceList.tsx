@@ -1,5 +1,3 @@
-// File: components/ExperienceList.tsx
-
 "use client";
 
 import { useEffect, useState } from 'react';
