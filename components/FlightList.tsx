@@ -272,10 +272,18 @@ export const FlightList = () => {
               )}
             </div>
             <div className="flex items-center gap-4">
-              <Badge variant="secondary" className="text-lg bg-secondary text-secondary-foreground">
+              <Badge
+                variant="secondary"
+                className="text-lg bg-secondary text-secondary-foreground"
+              >
                 {flights.length} flights found
               </Badge>
-              <Button variant="outline" size="sm" onClick={clearSavedResults} className="bg-background text-foreground">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearSavedResults}
+                className="bg-background text-foreground"
+              >
                 Clear Results
               </Button>
             </div>
@@ -301,7 +309,10 @@ export const FlightList = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-2xl font-bold text-primary">
-                          {formatPrice(flight.price.total, flight.price.currency)}
+                          {formatPrice(
+                            flight.price.total,
+                            flight.price.currency
+                          )}
                         </span>
                       </div>
                     </div>
@@ -320,7 +331,9 @@ export const FlightList = () => {
                                       {itinerary.segments[0].departure.iataCode}
                                     </div>
                                     <div className="text-sm text-muted-foreground">
-                                      {formatTime(itinerary.segments[0].departure.at)}
+                                      {formatTime(
+                                        itinerary.segments[0].departure.at
+                                      )}
                                     </div>
                                     <div className="text-xs text-muted-foreground">
                                       {new Date(
@@ -497,7 +510,8 @@ export const FlightList = () => {
               <div className="space-y-2">
                 <CardTitle className="text-primary">No Flights Found</CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Search for flights using the form above to see available options
+                  Search for flights using the form above to see available
+                  options
                 </CardDescription>
               </div>
             </div>

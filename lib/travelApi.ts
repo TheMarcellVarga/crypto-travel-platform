@@ -48,7 +48,6 @@ const applyAmadeusInterceptor = (instance: AxiosInstance) => {
   });
 };
 
-// Apply the interceptor to both instances
 applyAmadeusInterceptor(amadeusApiV2);
 applyAmadeusInterceptor(amadeusApiV3);
 
@@ -145,6 +144,10 @@ export const searchHotelOffers = async (
     });
     return response.data;
   } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.errors) {
+      const apiError = error.response.data.errors[0];
+      throw new Error(`${apiError.title}: ${apiError.detail}`);
+    }
     console.error(
       "Error searching hotel offers:",
       error.response?.data || error.message

@@ -118,7 +118,10 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 space-y-4 bg-background text-foreground">
+    <form
+      onSubmit={handleSubmit}
+      className="mb-6 space-y-4 bg-background text-foreground"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div>
           <IATAAutocomplete
@@ -203,7 +206,9 @@ export const FlightSearchForm = ({ onSearch }: FlightSearchFormProps) => {
             </Popover>
           </Label>
           {errors.departureDate && (
-            <p className="text-destructive text-sm mt-1">{errors.departureDate}</p>
+            <p className="text-destructive text-sm mt-1">
+              {errors.departureDate}
+            </p>
           )}
         </div>
 
