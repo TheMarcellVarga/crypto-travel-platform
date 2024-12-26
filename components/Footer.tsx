@@ -8,7 +8,7 @@ export const Footer = () => {
     )}>
       <div className="container mx-auto px-6 py-3">
         <div className="text-center">
-          &copy; {new Date().getFullYear()} Crypto Travel. All rights reserved.
+          &copy; {new Date().getFullYear()} CryptoVoyage. All rights reserved.
         </div>
       </div>
     </footer>

@@ -11,7 +11,7 @@ export const Header = () => {
       <nav className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="text-xl font-bold">
-            <Link href="/" className="hover:text-primary">Crypto Travel</Link>
+            <Link href="/" className="hover:text-primary">CryptoVoyage</Link>
           </div>
           <div className="flex space-x-4">
             <Link href="/accommodations">
