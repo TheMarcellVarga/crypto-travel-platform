@@ -1,4 +1,3 @@
-```markdown
 # CryptoVoyage - Crypto Travel Platform
 
 A personal project exploring the intersection of cryptocurrency and travel booking. Built with Next.js and modern web technologies, this platform demonstrates the potential of blockchain technology in the travel industry.
@@ -150,5 +149,3 @@ This project was built as part of my portfolio to demonstrate my skills in:
 - Radix UI Components
 - Travel APIs Documentation
 - Various design inspirations from Dribbble
-
-```
