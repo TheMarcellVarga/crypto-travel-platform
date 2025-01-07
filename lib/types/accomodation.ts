@@ -1,4 +1,3 @@
-// lib/types/accommodation.ts
 export interface SearchParams {
     location: string;
     checkIn: string;

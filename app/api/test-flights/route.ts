@@ -1,4 +1,3 @@
-// app/api/test-flights/route.ts
 import { NextResponse } from 'next/server';
 import { searchFlights } from '@/lib/travelApi';
 

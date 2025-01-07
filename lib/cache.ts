@@ -1,4 +1,3 @@
-// lib/cache.ts
 import NodeCache from 'node-cache';
 
 class Cache {
