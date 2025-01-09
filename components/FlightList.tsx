@@ -77,8 +77,12 @@ interface Flight {
   numberOfBookableSeats: number;
 }
 
-export const FlightList = () => {
-  const [flights, setFlights] = useState<Flight[]>([]);
+interface FlightListProps {
+  items?: Flight[]; // Using the Flight interface you already have
+}
+
+export const FlightList = ({ items }: FlightListProps) => {
+  const [flights, setFlights] = useState<Flight[]>(items || []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

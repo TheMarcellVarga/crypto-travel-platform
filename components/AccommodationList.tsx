@@ -24,7 +24,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const AccommodationList = () => {
+interface AccommodationListProps {
+  items?: any[]; // Replace 'any' with your actual accommodation type
+}
+
+export const AccommodationList = ({ items }: AccommodationListProps) => {
   const [hotelOffers, setHotelOffers] = useState<HotelOfferResponse["data"]>(
     []
   );
@@ -34,7 +38,6 @@ export const AccommodationList = () => {
   const [adults, setAdults] = useState(1);
   const [roomQuantity, setRoomQuantity] = useState(1);
   const [hotelId, setHotelId] = useState("MCLONGHM"); // Default hotel ID
-
   const handleSearch = async () => {
     if (!checkInDate) {
       setError("Please select a check-in date");

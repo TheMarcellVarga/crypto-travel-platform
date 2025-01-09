@@ -71,8 +71,12 @@ const getCryptoIcon = (crypto: string) => {
   }
 };
 
-export const ExperienceList = () => {
-  const [experiences, setExperiences] = useState<Experience[]>([]);
+interface ExperienceListProps {
+  items?: Experience[]; // Using the Experience interface you already have
+}
+
+export const ExperienceList = ({ items }: ExperienceListProps) => {
+  const [experiences, setExperiences] = useState<Experience[]>(items || []);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
