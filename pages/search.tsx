@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { AccommodationList } from "@/components/AccommodationList";
 import { ExperienceList } from "@/components/ExperienceList";
 import { FlightList } from "@/components/FlightList";
@@ -9,29 +9,35 @@ export default function Search() {
   const [searchResults, setSearchResults] = useState({
     accommodations: [],
     flights: [],
-    experiences: []
+    experiences: [],
   });
 
   const handleSearch = async (query: string) => {
     try {
       // You can replace these with actual API calls to your backend
-      const accommodationsResponse = await fetch(`/api/accommodations/search?q=${encodeURIComponent(query)}`);
-      const flightsResponse = await fetch(`/api/flights/search?q=${encodeURIComponent(query)}`);
-      const experiencesResponse = await fetch(`/api/experiences/search?q=${encodeURIComponent(query)}`);
+      const accommodationsResponse = await fetch(
+        `/api/accommodations/search?q=${encodeURIComponent(query)}`
+      );
+      const flightsResponse = await fetch(
+        `/api/flights/search?q=${encodeURIComponent(query)}`
+      );
+      const experiencesResponse = await fetch(
+        `/api/experiences/search?q=${encodeURIComponent(query)}`
+      );
 
       const [accommodations, flights, experiences] = await Promise.all([
         accommodationsResponse.json(),
         flightsResponse.json(),
-        experiencesResponse.json()
+        experiencesResponse.json(),
       ]);
 
       setSearchResults({
         accommodations,
         flights,
-        experiences
+        experiences,
       });
     } catch (error) {
-      console.error('Error performing search:', error);
+      console.error("Error performing search:", error);
       // You might want to add error handling UI here
     }
   };

@@ -170,7 +170,9 @@ const IATAAutocomplete: React.FC<IATAAutocompleteProps> = ({
             <li
               key={item.iata}
               className={`cursor-pointer select-none relative py-2 px-3 ${
-                index === selectedIndex ? "bg-accent text-accent-foreground" : "text-popover-foreground hover:bg-accent hover:text-accent-foreground"
+                index === selectedIndex
+                  ? "bg-accent text-accent-foreground"
+                  : "text-popover-foreground hover:bg-accent hover:text-accent-foreground"
               }`}
               onClick={() => handleSelect(item)}
             >

@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export const TravelPackages = () => {
   return (
@@ -12,14 +12,18 @@ export const TravelPackages = () => {
           </CardHeader>
           <CardContent className="flex flex-col flex-1">
             <div className="flex-1">
-              <p className="text-lg text-muted-foreground mb-4">Perfect for budget-conscious travelers</p>
+              <p className="text-lg text-muted-foreground mb-4">
+                Perfect for budget-conscious travelers
+              </p>
               <ul className="list-disc list-inside mb-6">
                 <li>Economy class flights</li>
                 <li>3-4 star accommodations</li>
                 <li>Standard travel insurance</li>
                 <li>24/7 customer support</li>
               </ul>
-              <p className="text-sm text-muted-foreground mb-4">Pay with popular cryptocurrencies: BTC, ETH, USDT</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Pay with popular cryptocurrencies: BTC, ETH, USDT
+              </p>
             </div>
             <Button className="w-full mt-auto">Search Standard Options</Button>
           </CardContent>
@@ -31,7 +35,9 @@ export const TravelPackages = () => {
           </CardHeader>
           <CardContent className="flex flex-col flex-1">
             <div className="flex-1">
-              <p className="text-lg text-muted-foreground mb-4">Enhanced comfort and exclusive experiences</p>
+              <p className="text-lg text-muted-foreground mb-4">
+                Enhanced comfort and exclusive experiences
+              </p>
               <ul className="list-disc list-inside mb-6">
                 <li>Business class flights</li>
                 <li>5-star luxury hotels</li>
@@ -39,7 +45,9 @@ export const TravelPackages = () => {
                 <li>Priority customer service</li>
                 <li>Access to exclusive events</li>
               </ul>
-              <p className="text-sm text-muted-foreground mb-4">Additional crypto payment options available</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Additional crypto payment options available
+              </p>
             </div>
             <Button className="w-full mt-auto">Explore Luxury Options</Button>
           </CardContent>
@@ -51,7 +59,9 @@ export const TravelPackages = () => {
           </CardHeader>
           <CardContent className="flex flex-col flex-1">
             <div className="flex-1">
-              <p className="text-lg text-muted-foreground mb-4">The ultimate in luxury travel</p>
+              <p className="text-lg text-muted-foreground mb-4">
+                The ultimate in luxury travel
+              </p>
               <ul className="list-disc list-inside mb-6">
                 <li>Private jet options</li>
                 <li>Ultra-luxury resorts & villas</li>
@@ -60,7 +70,9 @@ export const TravelPackages = () => {
                 <li>VIP access to exclusive venues</li>
                 <li>Luxury vehicle rentals</li>
               </ul>
-              <p className="text-sm text-muted-foreground mb-4">Accepts all major cryptocurrencies</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Accepts all major cryptocurrencies
+              </p>
             </div>
             <Button className="w-full mt-auto">Discover Ultra-Luxury</Button>
           </CardContent>

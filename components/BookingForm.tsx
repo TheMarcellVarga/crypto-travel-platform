@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from 'react';
-import { Button } from './ui/button';
+import { useState } from "react";
+import { Button } from "./ui/button";
 
 interface BookingFormProps {
   onSubmit: (bookingData: any) => void;
@@ -9,8 +9,8 @@ interface BookingFormProps {
 
 export const BookingForm = ({ onSubmit }: BookingFormProps) => {
   const [bookingData, setBookingData] = useState({
-    name: '',
-    email: '',
+    name: "",
+    email: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,22 +21,30 @@ export const BookingForm = ({ onSubmit }: BookingFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="name" className="block mb-1">Name</label>
+        <label htmlFor="name" className="block mb-1">
+          Name
+        </label>
         <input
           type="text"
           id="name"
           value={bookingData.name}
-          onChange={(e) => setBookingData({ ...bookingData, name: e.target.value })}
+          onChange={(e) =>
+            setBookingData({ ...bookingData, name: e.target.value })
+          }
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div>
-        <label htmlFor="email" className="block mb-1">Email</label>
+        <label htmlFor="email" className="block mb-1">
+          Email
+        </label>
         <input
           type="email"
           id="email"
           value={bookingData.email}
-          onChange={(e) => setBookingData({ ...bookingData, email: e.target.value })}
+          onChange={(e) =>
+            setBookingData({ ...bookingData, email: e.target.value })
+          }
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>

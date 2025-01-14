@@ -1,8 +1,8 @@
-import { Layout } from '@/components/Layout';
-import { SearchForm } from '@/components/SearchForm';
-import { AccommodationList } from '@/components/AccommodationList';
-import { FlightList } from '@/components/FlightList';
-import { ExperienceList } from '@/components/ExperienceList';
+import { Layout } from "@/components/Layout";
+import { SearchForm } from "@/components/SearchForm";
+import { AccommodationList } from "@/components/AccommodationList";
+import { FlightList } from "@/components/FlightList";
+import { ExperienceList } from "@/components/ExperienceList";
 
 export default function Search() {
   const handleSearch = (query: string) => {

@@ -1,10 +1,10 @@
-import { Layout } from '@/components/Layout';
-import { UserProfile } from '@/components/UserProfile';
+import { Layout } from "@/components/Layout";
+import { UserProfile } from "@/components/UserProfile";
 
 export default function Profile() {
   const user = {
-    name: 'John Doe',
-    email: 'john@example.com',
+    name: "John Doe",
+    email: "john@example.com",
     // Add more user data
   };
 
