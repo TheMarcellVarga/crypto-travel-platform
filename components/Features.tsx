@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Features = () => {
   return (
@@ -10,7 +10,8 @@ export const Features = () => {
             <CardTitle>Secure Payments</CardTitle>
           </CardHeader>
           <CardContent>
-            We ensure secure and seamless cryptocurrency transactions for your travel bookings.
+            We ensure secure and seamless cryptocurrency transactions for your
+            travel bookings.
           </CardContent>
         </Card>
         <Card>
@@ -26,7 +27,8 @@ export const Features = () => {
             <CardTitle>Exclusive Experiences</CardTitle>
           </CardHeader>
           <CardContent>
-            Discover unique and unforgettable experiences tailored for crypto enthusiasts.
+            Discover unique and unforgettable experiences tailored for crypto
+            enthusiasts.
           </CardContent>
         </Card>
       </div>

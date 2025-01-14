@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { Button } from './ui/button';
+import { useState } from "react";
+import { Button } from "./ui/button";
 
 interface SearchFormProps {
   onSearch: (query: string) => void;
 }
 
 export const SearchForm = ({ onSearch }: SearchFormProps) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

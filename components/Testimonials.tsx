@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Testimonials = () => {
   return (
@@ -16,7 +16,8 @@ export const Testimonials = () => {
               <CardTitle className="mt-4">Alice Crypto</CardTitle>
             </CardHeader>
             <CardContent>
-              "CryptoVoyage made my dream vacation a reality. Booking with crypto was seamless!"
+              "CryptoVoyage made my dream vacation a reality. Booking with
+              crypto was seamless!"
             </CardContent>
           </Card>
           <Card>
@@ -28,7 +29,8 @@ export const Testimonials = () => {
               <CardTitle className="mt-4">Bob Blockchain</CardTitle>
             </CardHeader>
             <CardContent>
-              "I love how easy it is to use my crypto for travel. The experiences are top-notch!"
+              "I love how easy it is to use my crypto for travel. The
+              experiences are top-notch!"
             </CardContent>
           </Card>
           <Card>
@@ -40,7 +42,8 @@ export const Testimonials = () => {
               <CardTitle className="mt-4">Carol Coinbase</CardTitle>
             </CardHeader>
             <CardContent>
-              "The variety of destinations and the security of transactions make CryptoVoyage my go-to travel platform."
+              "The variety of destinations and the security of transactions make
+              CryptoVoyage my go-to travel platform."
             </CardContent>
           </Card>
         </div>

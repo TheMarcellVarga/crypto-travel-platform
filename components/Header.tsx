@@ -1,17 +1,16 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const Header = () => {
   return (
-    <header className={cn(
-      "border-b",
-      "bg-background text-foreground"
-    )}>
+    <header className={cn("border-b", "bg-background text-foreground")}>
       <nav className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="text-xl font-bold">
-            <Link href="/" className="hover:text-primary">CryptoVoyage</Link>
+            <Link href="/" className="hover:text-primary">
+              CryptoVoyage
+            </Link>
           </div>
           <div className="flex space-x-4">
             <Link href="/accommodations">
